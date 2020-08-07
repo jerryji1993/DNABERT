@@ -941,7 +941,11 @@ def main():
     parser.add_argument(
         "--overwrite_cache", action="store_true", help="Overwrite the cached training and evaluation sets",
     )
+    parser.add_argument(
+        "--visualize_models", type=int, default=None, help="The model used to do visualization. If None, use 3456.",
+    )
     parser.add_argument("--seed", type=int, default=42, help="random seed for initialization")
+
 
     parser.add_argument(
         "--fp16",
@@ -1135,10 +1139,12 @@ def main():
 
     # Visualize
     if args.do_visualize and args.local_rank in [-1, 0]:
+        visualization_models = [3,4,5,6] if not args.visualize_models else [visualize_models]
+
         scores = None
         all_probs = None
 
-        for kmer in range(3,7):
+        for kmer in visualization_models:
             output_dir = args.output_dir.replace("/690", "/690/" + str(kmer))
             checkpoint_name = os.listdir(output_dir)[0]
             output_dir = os.path.join(output_dir, checkpoint_name)
@@ -1167,7 +1173,7 @@ def main():
                 all_probs = deepcopy(probs)
                 scores = deepcopy(attention_scores)
 
-        all_probs = all_probs/4.0
+        all_probs = all_probs/float(len(visualization_models))
         np.save(os.path.join(args.predict_dir, "atten.npy"), scores)
         np.save(os.path.join(args.predict_dir, "pred_results.npy"), all_probs)
 

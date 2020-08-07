@@ -114,13 +114,13 @@ Please see the template data at `/example/sample_data/ft/`. If you are trying to
 
 #### 3.2 Download pre-trained DNABERT
 
-[DNABERT3]()
+[DNABERT3](https://northwestern.box.com/s/s492dj5g2wwotdh40v9uv5gwikqi246q)
 
-[DNABERT4]()
+[DNABERT4](https://northwestern.box.com/s/rmmepi2upskgob4fgeohdwh1r5w37oqo)
 
-[DNABERT5]()
+[DNABERT5](https://northwestern.box.com/s/6wjib1tnnt7efj5yzmxc3da0so800c6c)
 
-[DNABERT6]()
+[DNABERT6](https://northwestern.box.com/s/g8m974tr86h0pvnpymxq84f1yxlhnvbi)
 
 ```
 MODEL_PATH=PATH_TO_SAVE_MODEL
@@ -133,7 +133,7 @@ unzip 6-new-12w-0.zip
 
 #### 3.3 Fine-tune with pre-trained model
 
-In the following example,  we use DNABERT with kmer=6 as example.
+In the following example,  we use DNABERT with kmer=6 as example. We use `prom-core`, a 2-class classification task as example.
 
 ```
 cd examples
@@ -171,4 +171,69 @@ python run_glue.py \
 
 
 
-## 4. 
+## 4. Prediction
+
+After the model is fine-tuned, we can get predictions by running
+
+```$
+export KMER=6
+export MODEL_PATH=./ft/prom-core/$KMER
+export DATA_PATH=sample_data/ft/prom-core/$KMER
+export PREDICTION_PATH=./result/prom-core/$KMER
+
+python run_glue.py \
+    --model_type dna \
+    --tokenizer_name=dna$KMER \
+    --model_name_or_path $MODEL_PATH \
+    --task_name dnaprom \
+    --do_predict \
+    --data_dir $DATA_PATH  \
+    --max_seq_length 75 \
+    --per_gpu_pred_batch_size=128   \
+    --output_dir $MODEL_PATH \
+    --predict_dir $PREDICTION_PATH \
+    --fp16 \
+    --n_process 48
+```
+
+With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and makes prediction on the `dev.tsv` file that saved in `DATA_PATH` and save the prediction result at `PREDICTION_PATH`.
+
+
+
+
+
+## 5. Visualization
+
+Visualiazation of DNABERT consists of 2 steps. Calcualate attention scores and Plot.
+
+#### 5.1 Calculate attention scores
+
+calculate with only one model (For example, DNABERT6)
+
+```
+export KMER=6
+export MODEL_PATH=./ft/prom-core/$KMER
+export DATA_PATH=sample_data/ft/prom-core/$KMER
+export PREDICTION_PATH=./result/prom-core/$KMER
+
+python run_glue.py \
+    --model_type dna \
+    --model_name_or_path $MODEL_PATH \
+    --task_name dnaprom \
+    --do_visualize \
+    --visualize_data_dir $DATA_PATH \
+    --data_dir $DATA_PATH \
+    --max_seq_length 81 \
+    --per_gpu_pred_batch_size=16   \
+    --output_dir $MODEL_PATH \
+    --predict_dir $PREDICTION_PATH \
+    --fp16 \
+    --n_process 96
+```
+
+With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and calculates attention scores on the `dev.tsv` file that saved in `DATA_PATH` and save the result at `PREDICTION_PATH`.
+
+
+
+####5.2 Plotting tool
+
