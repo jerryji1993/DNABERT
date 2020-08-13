@@ -1,5 +1,5 @@
 # DNABERT
-This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under-developing, more features will be included. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we published the pre-trained models. We clone codes from [huggingface](https://github.com/huggingface/transformers) and adapt them to the DNA scenario.
+This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We cloned codes from [huggingface](https://github.com/huggingface/transformers) and adapt them to the DNA scenario.
 
 
 
