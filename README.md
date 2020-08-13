@@ -5,7 +5,7 @@ This repository contains DNABERT package. In this package, we offers resources i
 
 ## 1. Environment setup
 
-We recommond you to build a python virtual environment with [Anaconda](https://docs.anaconda.com/anaconda/install/linux/)
+We recommend you to build a python virtual environment with [Anaconda](https://docs.anaconda.com/anaconda/install/linux/). Also, please make sure you have at least one NVIDIA GPU with Linux x86_64 Driver Version >= 410.48 (compatible with CUDA 10.0). We applied distributed training on 8 NVIDIA GeForce RTX 2080 Ti with 11 GB graphic memory, and the batch size corresponds to it. If you use GPU with other specifications and memory sizes, consider adjusting your batch size accordingly.
 
 #### 1.1 Create and activate a new virtual environment
 
