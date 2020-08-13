@@ -1,9 +1,9 @@
 # DNABERT
-This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under-developing, more features will be included. Training of DNABER consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we published the pre-trained models. We clone codes from [huggingface](https://github.com/huggingface/transformers) and adapt them to the DNA scenario.
+This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under-developing, more features will be included. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we published the pre-trained models. We clone codes from [huggingface](https://github.com/huggingface/transformers) and adapt them to the DNA scenario.
 
 
 
-## 1. Enviroment setup
+## 1. Environment setup
 
 We recommond you to build a python virtual environment with [Anaconda](https://docs.anaconda.com/anaconda/install/linux/)
 
@@ -237,3 +237,28 @@ With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_
 
 ####5.2 Plotting tool
 
+## 6. Motif analysis
+
+Once the attention scores are generated, we can proceed further to perform motif analysis using `motif/find_motifs.py`:
+
+```
+cd ../motif
+
+export KMER=6
+export DATA_PATH=../examples/sample_data/ft/prom-core/$KMER
+export PREDICTION_PATH=../examples/result/prom-core/$KMER
+export MOTIF_PATH=./result/prom-core/$KMER
+
+python find_motifs.py \
+    --data_dir $DATA_PATH \
+    --predict_dir $PREDICTION_PATH \
+    --window_size 24 \
+    --min_len 5 \
+    --pval_cutoff 0.005 \
+    --min_n_motif 3 \
+    --align_all_ties \
+    --save_file_dir $MOTIF_PATH \
+    --verbose \
+```
+
+The script will generate a .txt file and a weblogo .png file for each motif under `MOTIF_PATH`.
