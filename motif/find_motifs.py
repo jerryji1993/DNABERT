@@ -504,6 +504,7 @@ def motif_analysis(pos_seqs,
     if save_file_dir is not None:
         if verbose:
             print("* Saving outputs to directory")
+        os.makedirs(save_file_dir, exist_ok=True)
         for motif, instances in merged_motif_seqs.items():
             # saving to files
             with open(save_file_dir+'/motif_{}_{}.txt'.format(motif, len(instances['seq_idx'])), 'w') as f:
