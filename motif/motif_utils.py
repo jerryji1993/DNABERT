@@ -5,6 +5,16 @@ import pandas as pd
 import numpy as np
 
 def kmer2seq(kmers):
+    """
+    Convert kmers to original sequence
+    
+    Arguments:
+    kmers -- str, kmers separated by space.
+    
+    Returns:
+    seq -- str, original sequence.
+
+    """
     kmers_list = kmers.split(" ")
     bases = [kmer[0] for kmer in kmers_list[0:-1]]
     bases.append(kmers_list[-1])
