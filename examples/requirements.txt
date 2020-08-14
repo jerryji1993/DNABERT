@@ -7,3 +7,4 @@ scipy
 statsmodels
 biopython
 pandas
+pybedtools
