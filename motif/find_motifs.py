@@ -106,6 +106,7 @@ def main():
                                         return_idx  = args.return_idx
                                     )
 
-
+if __name__ == "__main__":
+    main()
 
 
