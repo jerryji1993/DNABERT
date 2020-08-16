@@ -264,3 +264,56 @@ python find_motifs.py \
 ```
 
 The script will generate a .txt file and a weblogo .png file for each motif under `MOTIF_PATH`.
+
+## 7. Genomic variants analysis
+
+To perform genomic variants analysis (e.g. SNPs), we need to first ensure the predictions for the sequences were generated. Then, create a file (template in `SNP/example_mut_file.txt`) specifying for which sequences in `dev.tsv` and start and end indices where we need to perform the mutation. The first column indicates the index of sequence in `dev.tsv` to be mutated. Second and third columns are the start and end indices while the fourth column is the target of mutation (can be substitution, insertion, deletion, etc.)
+
+Once such a file is created, we can perform mutation on the sequences:
+
+```
+cd ../SNP
+python mutate_seqs.py ./../examples/sample_data/ft/prom-core/6/dev.tsv ./examples/ --mut_file ./example_mut_file.txt --k 6
+```
+Alternatively, we can choose to leave the `--mut_file` argument blank, where the program would try to perform substitution of all bases to the four possible nucleotides ('A', 'T', 'C', or 'G') for all sequences. This would be useful for plotting a mutation heatmap as included in the paper. **Note that this would be slow if the `dev.tsv` contains a lot of sequences or the input sequences are very long, as the command would try to perform mutation on all possible locations of them**.
+
+```
+cd ../SNP
+python mutate_seqs.py ./../examples/sample_data/ft/prom-core/6/dev.tsv ./examples/ --k 6
+```
+
+After that, we can again predict on the generated sequences. **Note: if you have insertion/deletions in your `mut_file.txt`, consider changing the `max_seq_length` we use when making predictions.**
+
+```
+export KMER=6
+export MODEL_PATH=../examples/ft/prom-core/$KMER
+export DATA_PATH=examples
+export PREDICTION_PATH=examples
+
+python ../examples/run_glue.py \
+    --model_type dna \
+    --tokenizer_name=dna$KMER \
+    --model_name_or_path $MODEL_PATH \
+    --task_name dnaprom \
+    --do_predict \
+    --data_dir $DATA_PATH  \
+    --max_seq_length 75 \
+    --per_gpu_pred_batch_size=128   \
+    --output_dir $MODEL_PATH \
+    --predict_dir $PREDICTION_PATH \
+    --fp16 \
+    --n_process 48
+```
+
+This will again create `pred_results.npy` file under the `$PREDICTION_PATH`. Once we have all the above, we can compute the effect of these mutations by:
+
+```
+python SNP.py \
+    --orig_seq_file ../examples/sample_data/ft/prom-core/6/dev.tsv \
+    --orig_pred_file ../examples/result/prom-core/6/pred_results.npy \
+    --mut_seq_file examples/dev.tsv \
+    --mut_pred_file examples/pred_results.npy \
+    --save_file_dir examples
+```
+
+This would save a `mutations.tsv` file under `save_file_dir`, that contains index of original sequence (in original `dev.tsv`), original sequence and predictions, mutated sequence and predictions, as well as the difference score and log odds ratio of the change in every case.
