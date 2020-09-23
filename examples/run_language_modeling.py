@@ -30,6 +30,7 @@ import re
 import shutil
 from typing import Dict, List, Tuple
 from copy import deepcopy
+from multiprocessing import Pool
 
 import numpy as np
 import torch
@@ -133,6 +134,9 @@ class TextDataset(Dataset):
     def __getitem__(self, item):
         return torch.tensor(self.examples[item], dtype=torch.long)
 
+def convert_line_to_example(tokenizer, lines, max_length, add_special_tokens=True):
+    examples = tokenizer.batch_encode_plus(lines, add_special_tokens=add_special_tokens, max_length=max_length)["input_ids"]
+    return examples
 
 class LineByLineTextDataset(Dataset):
     def __init__(self, tokenizer: PreTrainedTokenizer, args, file_path: str, block_size=512):
@@ -154,8 +158,30 @@ class LineByLineTextDataset(Dataset):
 
             with open(file_path, encoding="utf-8") as f:
                 lines = [line for line in f.read().splitlines() if (len(line) > 0 and not line.isspace())]
+            
+            if args.n_process == 1:
+                self.examples = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)["input_ids"]
+            else:
+                n_proc = args.n_process
+                p = Pool(n_proc)
+                indexes = [0]
+                len_slice = int(len(lines)/n_proc)
+                for i in range(1, n_proc+1):
+                    if i != n_proc:
+                        indexes.append(len_slice*(i))
+                    else:
+                        indexes.append(len(lines))
+                results = []
+                for i in range(n_proc):
+                    results.append(p.apply_async(convert_line_to_example,[tokenizer, lines[indexes[i]:indexes[i+1]], block_size,]))
+                    print(str(i) + " start")
+                p.close() 
+                p.join()
 
-            self.examples = tokenizer.batch_encode_plus(lines, add_special_tokens=True, max_length=block_size)["input_ids"]
+                self.examples = []
+                for result in results:
+                    ids = result.get()
+                    self.examples.extend(ids)
 
             logger.info("Saving features into cached file %s", cached_features_file)
             with open(cached_features_file, "wb") as handle:
@@ -659,6 +685,7 @@ def main():
         "--overwrite_cache", action="store_true", help="Overwrite the cached training and evaluation sets"
     )
     parser.add_argument("--seed", type=int, default=42, help="random seed for initialization")
+    parser.add_argument("--n_process", type=int, default=1, help="")
 
     parser.add_argument(
         "--fp16",

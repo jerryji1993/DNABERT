@@ -27,7 +27,7 @@ git clone https://github.com/jerryji1993/DNABERT
 cd DNABERT
 python3 -m pip install --editable .
 cd examples
-python3 -m pip install -r requirements
+python3 -m pip install -r requirements.txt
 ```
 
 
@@ -64,8 +64,8 @@ In the following example, we use DNABERT with kmer=6 as example.
 cd examples
 
 export KMER=6
-export TRAIN_FILE=/sample_data/pre/6_3k.txt
-export TEST_FILE=/sample_data/pre/6_3k.txt
+export TRAIN_FILE=sample_data/pre/6_3k.txt
+export TEST_FILE=sample_data/pre/6_3k.txt
 export SOURCE=PATH_TO_DNABERT_REPO
 export OUTPUT_PATH=output$KMER
 
@@ -82,7 +82,6 @@ python run_language_modeling.py \
     --gradient_accumulation_steps 25 \
     --per_gpu_train_batch_size 10 \
     --per_gpu_eval_batch_size 6 \
-    --fp16 \
     --save_steps 500 \
     --save_total_limit 20 \
     --max_steps 200000 \
@@ -101,7 +100,7 @@ python run_language_modeling.py \
     --n_process 24
 ```
 
-
+Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 
@@ -169,7 +168,7 @@ python run_glue.py \
     --n_process 8
 ```
 
-
+Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 
@@ -194,14 +193,13 @@ python run_glue.py \
     --per_gpu_pred_batch_size=128   \
     --output_dir $MODEL_PATH \
     --predict_dir $PREDICTION_PATH \
-    --fp16 \
     --n_process 48
 ```
 
 With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and makes prediction on the `dev.tsv` file that saved in `DATA_PATH` and save the prediction result at `PREDICTION_PATH`.
 
 
-
+Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 ## 5. Visualization
@@ -229,13 +227,12 @@ python run_glue.py \
     --per_gpu_pred_batch_size=16   \
     --output_dir $MODEL_PATH \
     --predict_dir $PREDICTION_PATH \
-    --fp16 \
     --n_process 96
 ```
 
 With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and calculates attention scores on the `dev.tsv` file that saved in `DATA_PATH` and save the result at `PREDICTION_PATH`.
 
-
+Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 ####5.2 Plotting tool
 

@@ -1,0 +1,6 @@
+example/runs
+src/transformers/data/__pycache__
+src/transformers/data/metrics/__pycache__
+src/transformers/data/processors/__pycache__
+src/transformers/__pycache__
+src/transformers.egg-info

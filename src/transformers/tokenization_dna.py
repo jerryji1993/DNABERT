@@ -30,31 +30,22 @@ logger = logging.getLogger(__name__)
 VOCAB_FILES_NAMES = {"vocab_file": "vocab.txt"}
 
 
-# PRETRAINED_VOCAB_FILES_MAP = {"vocab_file": {"dna1": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-1/vocab.txt",
-#                                              "dna2": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-2/vocab.txt",
-#                                              "dna3": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-3/vocab.txt",
-#                                              "dna4": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-4/vocab.txt",
-#                                              "dna5": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-5/vocab.txt",
-#                                              "dna6": "https://raw.githubusercontent.com/Zhihan1996/dna-transformers/master/examples/bert-config-6/vocab.txt"}}
 
 
-PRETRAINED_VOCAB_FILES_MAP = {"vocab_file": {"dna3": "dnabert-config/bert-config-3/vocab.txt",
-                                             "dna4": "dnabert-config/bert-config-4/vocab.txt",
-                                             "dna5": "dnabert-config/bert-config-5/vocab.txt",
-                                             "dna6": "dnabert-config/bert-config-6/vocab.txt"}}
+PRETRAINED_VOCAB_FILES_MAP = {"vocab_file": {"dna3": "https://raw.githubusercontent.com/jerryji1993/DNABERT/master/src/transformers/dnabert-config/bert-config-3/vocab.txt",
+                                             "dna4": "https://raw.githubusercontent.com/jerryji1993/DNABERT/master/src/transformers/dnabert-config/bert-config-4/vocab.txt",
+                                             "dna5": "https://raw.githubusercontent.com/jerryji1993/DNABERT/master/src/transformers/dnabert-config/bert-config-5/vocab.txt",
+                                             "dna6": "https://raw.githubusercontent.com/jerryji1993/DNABERT/master/src/transformers/dnabert-config/bert-config-6/vocab.txt"}}
 
 
 
-PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES = {"dna1": 512,
-                                          "dna2": 512,
+PRETRAINED_POSITIONAL_EMBEDDINGS_SIZES = {
                                           "dna3": 512,
                                           "dna4": 512,
                                           "dna5": 512,
                                           "dna6": 512}
 
 PRETRAINED_INIT_CONFIGURATION = {
-    "dna1": {"do_lower_case": False},
-    "dna2": {"do_lower_case": False},
     "dna3": {"do_lower_case": False},
     "dna4": {"do_lower_case": False},
     "dna5": {"do_lower_case": False},
@@ -75,7 +66,6 @@ def load_vocab(vocab_file):
     for index, token in enumerate(tokens):
         token = token.rstrip("\n")
         vocab[token] = index
-    # print(vocab)
     return vocab
 
 
