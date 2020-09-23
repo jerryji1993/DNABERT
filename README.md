@@ -42,7 +42,7 @@ cd apex
 pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
 ```
 
- 
+
 
 
 
@@ -69,7 +69,7 @@ export TEST_FILE=sample_data/pre/6_3k.txt
 export SOURCE=PATH_TO_DNABERT_REPO
 export OUTPUT_PATH=output$KMER
 
-python run_language_modeling.py \
+python run_pretraining.py \
     --output_dir $OUTPUT_PATH \
     --model_type=dna \
     --tokenizer_name=dna$KMER \
@@ -144,7 +144,7 @@ export MODEL_PATH=PATH_TO_THE_PRETRAINED_MODEL
 export DATA_PATH=sample_data/ft/prom-core/$KMER
 export OUTPUT_PATH=./ft/prom-core/$KMER
 
-python run_glue.py \
+python run_finetune.py \
     --model_type dna \
     --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
@@ -182,7 +182,7 @@ export MODEL_PATH=./ft/prom-core/$KMER
 export DATA_PATH=sample_data/ft/prom-core/$KMER
 export PREDICTION_PATH=./result/prom-core/$KMER
 
-python run_glue.py \
+python run_finetune.py \
     --model_type dna \
     --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
@@ -216,7 +216,7 @@ export MODEL_PATH=./ft/prom-core/$KMER
 export DATA_PATH=sample_data/ft/prom-core/$KMER
 export PREDICTION_PATH=./result/prom-core/$KMER
 
-python run_glue.py \
+python run_finetune.py \
     --model_type dna \
     --model_name_or_path $MODEL_PATH \
     --task_name dnaprom \
@@ -287,7 +287,7 @@ export MODEL_PATH=../examples/ft/prom-core/$KMER
 export DATA_PATH=examples
 export PREDICTION_PATH=examples
 
-python ../examples/run_glue.py \
+python ../examples/run_finetune.py \
     --model_type dna \
     --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
