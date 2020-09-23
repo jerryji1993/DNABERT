@@ -569,11 +569,12 @@ def visualize(args, model, tokenizer, kmer, prefix=""):
     
 
     for pred_task, pred_output_dir in zip(pred_task_names, pred_outputs_dirs):
+        '''
         if args.task_name != "dna690":
             args.data_dir = os.path.join(args.visualize_data_dir, str(kmer))
         else:
             args.data_dir = deepcopy(args.visualize_data_dir).replace("/690", "/690/" + str(kmer))
-        
+        '''
             
             
         evaluate = False if args.visualize_train else True
@@ -1139,15 +1140,16 @@ def main():
 
     # Visualize
     if args.do_visualize and args.local_rank in [-1, 0]:
-        visualization_models = [3,4,5,6] if not args.visualize_models else [visualize_models]
+        visualization_models = [3,4,5,6] if not args.visualize_models else [args.visualize_models]
 
         scores = None
         all_probs = None
 
         for kmer in visualization_models:
             output_dir = args.output_dir.replace("/690", "/690/" + str(kmer))
-            checkpoint_name = os.listdir(output_dir)[0]
-            output_dir = os.path.join(output_dir, checkpoint_name)
+            #checkpoint_name = os.listdir(output_dir)[0]
+            #output_dir = os.path.join(output_dir, checkpoint_name)
+            
             tokenizer = tokenizer_class.from_pretrained(
                 "dna"+str(kmer),
                 do_lower_case=args.do_lower_case,
@@ -1163,7 +1165,12 @@ def main():
                 cache_dir=args.cache_dir if args.cache_dir else None,
             )
             config.output_attentions = True
-            model = model_class.from_pretrained(checkpoint, config=config)
+            model = model_class.from_pretrained(
+                checkpoint,
+                from_tf=bool(".ckpt" in args.model_name_or_path),
+                config=config,
+                cache_dir=args.cache_dir if args.cache_dir else None,
+            )
             model.to(args.device)
             attention_scores, probs = visualize(args, model, tokenizer, prefix=prefix, kmer=kmer)
             if scores is not None:

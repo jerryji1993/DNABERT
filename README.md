@@ -1,5 +1,7 @@
 # DNABERT
-This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We extended codes from [huggingface](https://github.com/huggingface/transformers) and adapted them to the DNA scenario.
+This repository includes the implementation of 'DNABERT: pre-trained Bidirectional Encoder Representations from Transformers model for DNA-language in genome'. Please cite our paper if you use the models or codes. The repo is still under developing, so please kindly let us know if there is any issue.
+
+ In this package, we provides resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We extended codes from [huggingface](https://github.com/huggingface/transformers) and adapted them to the DNA scenario.
 
 
 
