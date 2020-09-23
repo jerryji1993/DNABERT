@@ -1197,7 +1197,12 @@ def main():
                 cache_dir=args.cache_dir if args.cache_dir else None,
             )
             config.output_attentions = True
-            model = model_class.from_pretrained(checkpoint, config=config)
+            model = model_class.from_pretrained(
+                args.model_name_or_path,
+                from_tf=bool(".ckpt" in args.model_name_or_path),
+                config=config,
+                cache_dir=args.cache_dir if args.cache_dir else None,
+            )
             model.to(args.device)
             if kmer == 3:
                 args.data_dir = os.path.join(args.data_dir, str(kmer))

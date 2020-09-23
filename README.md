@@ -100,7 +100,7 @@ python run_pretraining.py \
     --n_process 24
 ```
 
-Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
+Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 
@@ -168,7 +168,7 @@ python run_finetune.py \
     --n_process 8
 ```
 
-Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
+Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 
@@ -199,7 +199,7 @@ python run_finetune.py \
 With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and makes prediction on the `dev.tsv` file that saved in `DATA_PATH` and save the prediction result at `PREDICTION_PATH`.
 
 
-Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
+Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 
 ## 5. Visualization
@@ -218,6 +218,7 @@ export PREDICTION_PATH=./result/prom-core/$KMER
 
 python run_finetune.py \
     --model_type dna \
+    --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
     --task_name dnaprom \
     --do_visualize \
@@ -232,7 +233,7 @@ python run_finetune.py \
 
 With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and calculates attention scores on the `dev.tsv` file that saved in `DATA_PATH` and save the result at `PREDICTION_PATH`.
 
-Add --fp16 tag if you do not want to perfrom mixed precision. (You have to install the 'apex' from source first).
+Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
 ####5.2 Plotting tool
 
