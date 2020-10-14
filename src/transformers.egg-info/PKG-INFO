@@ -7,7 +7,9 @@ Author: Thomas Wolf, Lysandre Debut, Victor Sanh, Julien Chaumond, Sam Shleifer,
 Author-email: thomas@huggingface.co
 License: Apache
 Description: # DNABERT
-        This repository contains DNABERT package. In this package, we offers resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We extended codes from [huggingface](https://github.com/huggingface/transformers) and adapted them to the DNA scenario.
+        This repository includes the implementation of 'DNABERT: pre-trained Bidirectional Encoder Representations from Transformers model for DNA-language in genome'. Please cite our paper if you use the models or codes. The repo is still under developing, so please kindly let us know if there is any issue.
+        
+         In this package, we provides resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We extended codes from [huggingface](https://github.com/huggingface/transformers) and adapted them to the DNA scenario.
         
         
         
@@ -50,7 +52,7 @@ Description: # DNABERT
         pip install -v --no-cache-dir --global-option="--cpp_ext" --global-option="--cuda_ext" ./
         ```
         
-         
+        
         
         
         
@@ -72,12 +74,12 @@ Description: # DNABERT
         cd examples
         
         export KMER=6
-        export TRAIN_FILE=/sample_data/pre/6_3k.txt
-        export TEST_FILE=/sample_data/pre/6_3k.txt
+        export TRAIN_FILE=sample_data/pre/6_3k.txt
+        export TEST_FILE=sample_data/pre/6_3k.txt
         export SOURCE=PATH_TO_DNABERT_REPO
         export OUTPUT_PATH=output$KMER
         
-        python run_language_modeling.py \
+        python run_pretraining.py \
             --output_dir $OUTPUT_PATH \
             --model_type=dna \
             --tokenizer_name=dna$KMER \
@@ -90,7 +92,6 @@ Description: # DNABERT
             --gradient_accumulation_steps 25 \
             --per_gpu_train_batch_size 10 \
             --per_gpu_eval_batch_size 6 \
-            --fp16 \
             --save_steps 500 \
             --save_total_limit 20 \
             --max_steps 200000 \
@@ -109,7 +110,7 @@ Description: # DNABERT
             --n_process 24
         ```
         
-        
+        Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
         
         
         
@@ -153,7 +154,7 @@ Description: # DNABERT
         export DATA_PATH=sample_data/ft/prom-core/$KMER
         export OUTPUT_PATH=./ft/prom-core/$KMER
         
-        python run_glue.py \
+        python run_finetune.py \
             --model_type dna \
             --tokenizer_name=dna$KMER \
             --model_name_or_path $MODEL_PATH \
@@ -177,7 +178,7 @@ Description: # DNABERT
             --n_process 8
         ```
         
-        
+        Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
         
         
         
@@ -191,7 +192,7 @@ Description: # DNABERT
         export DATA_PATH=sample_data/ft/prom-core/$KMER
         export PREDICTION_PATH=./result/prom-core/$KMER
         
-        python run_glue.py \
+        python run_finetune.py \
             --model_type dna \
             --tokenizer_name=dna$KMER \
             --model_name_or_path $MODEL_PATH \
@@ -202,14 +203,13 @@ Description: # DNABERT
             --per_gpu_pred_batch_size=128   \
             --output_dir $MODEL_PATH \
             --predict_dir $PREDICTION_PATH \
-            --fp16 \
             --n_process 48
         ```
         
         With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and makes prediction on the `dev.tsv` file that saved in `DATA_PATH` and save the prediction result at `PREDICTION_PATH`.
         
         
-        
+        Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
         
         
         ## 5. Visualization
@@ -226,8 +226,9 @@ Description: # DNABERT
         export DATA_PATH=sample_data/ft/prom-core/$KMER
         export PREDICTION_PATH=./result/prom-core/$KMER
         
-        python run_glue.py \
+        python run_finetune.py \
             --model_type dna \
+            --tokenizer_name=dna$KMER \
             --model_name_or_path $MODEL_PATH \
             --task_name dnaprom \
             --do_visualize \
@@ -237,13 +238,12 @@ Description: # DNABERT
             --per_gpu_pred_batch_size=16   \
             --output_dir $MODEL_PATH \
             --predict_dir $PREDICTION_PATH \
-            --fp16 \
             --n_process 96
         ```
         
         With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_PATH` , and calculates attention scores on the `dev.tsv` file that saved in `DATA_PATH` and save the result at `PREDICTION_PATH`.
         
-        
+        Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
         
         ####5.2 Plotting tool
         
@@ -298,7 +298,7 @@ Description: # DNABERT
         export DATA_PATH=examples
         export PREDICTION_PATH=examples
         
-        python ../examples/run_glue.py \
+        python ../examples/run_finetune.py \
             --model_type dna \
             --tokenizer_name=dna$KMER \
             --model_name_or_path $MODEL_PATH \

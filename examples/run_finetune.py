@@ -539,8 +539,11 @@ def predict(args, model, tokenizer, prefix=""):
             result = compute_metrics(pred_task, preds, out_label_ids, probs[:,1])
         else:
             result = compute_metrics(pred_task, preds, out_label_ids, probs)
-
-        output_pred_file = os.path.join(pred_output_dir, prefix, "pred_results.npy")
+        
+        pred_output_dir = args.predict_dir
+        if not os.path.exists(pred_output_dir):
+               os.makedir(pred_output_dir)
+        output_pred_file = os.path.join(pred_output_dir, "pred_results.npy")
         logger.info("***** Pred results {} *****".format(prefix))
         for key in sorted(result.keys()):
             logger.info("  %s = %s", key, str(result[key]))
@@ -683,6 +686,15 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False):
         "cached_{}_{}_{}_{}".format(
             "dev" if evaluate else "train",
             list(filter(None, args.model_name_or_path.split("/"))).pop(),
+            str(args.max_seq_length),
+            str(task),
+        ),
+    )
+    if args.do_predict:
+        cached_features_file = os.path.join(
+        args.data_dir,
+        "cached_{}_{}_{}".format(
+            "dev" if evaluate else "train",
             str(args.max_seq_length),
             str(task),
         ),
@@ -1133,7 +1145,7 @@ def main():
         tokenizer = tokenizer_class.from_pretrained(args.output_dir, do_lower_case=args.do_lower_case)
         checkpoint = args.output_dir
         logger.info("Predict using the following checkpoint: %s", checkpoint)
-        prefix = checkpoint.split("/")[-1] if checkpoint.find("checkpoint") != -1 else ""
+        prefix = ''
         model = model_class.from_pretrained(checkpoint)
         model.to(args.device)
         prediction = predict(args, model, tokenizer, prefix=prefix)
