@@ -260,7 +260,7 @@ python find_motifs.py \
     --min_n_motif 3 \
     --align_all_ties \
     --save_file_dir $MOTIF_PATH \
-    --verbose \
+    --verbose
 ```
 
 The script will generate a .txt file and a weblogo .png file for each motif under `MOTIF_PATH`.
