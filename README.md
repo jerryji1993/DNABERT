@@ -71,7 +71,7 @@ export TEST_FILE=sample_data/pre/6_3k.txt
 export SOURCE=PATH_TO_DNABERT_REPO
 export OUTPUT_PATH=output$KMER
 
-python run_pretraining.py \
+python run_pretrain.py \
     --output_dir $OUTPUT_PATH \
     --model_type=dna \
     --tokenizer_name=dna$KMER \
