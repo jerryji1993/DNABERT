@@ -126,8 +126,8 @@ def Process(args):
                 max_length = len(sentence.split())
             writer.writerow([sentence, str(line[label_index])])
 
-    write_file(train_lines, train_w)
-    write_file(test_lines, test_w)
+    write_file(train_lines, train_w, args.seq_index, args.label_index)
+    write_file(test_lines, test_w, args.seq_index, args.label_index)
     
     if args.dev:
         write_file(dev_lines, dev_w)
@@ -169,6 +169,18 @@ def main():
         "--pair",
         action="store_true",
         help="Use this flag to split data as (8:1:1), else (9:1)",
+    )
+    parser.add_argument(
+        "--seq_index",
+        default=2,
+        type=int,
+        help="index of seq in the original csv file",
+    )
+    parser.add_argument(
+        "--label_index",
+        default=3,
+        type=int,
+        help="index of label in the original csv file",
     )
     args = parser.parse_args()
     

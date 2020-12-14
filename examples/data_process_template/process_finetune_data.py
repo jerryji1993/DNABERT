@@ -607,9 +607,9 @@ def Process(args):
             os.makedirs(root_path)
  
     old_file =  open(args.file_path, "r", encoding="utf-8-sig")
-    lines = list(csv.reader(old_file, delimiter="\t", quotechar=None))
+    lines = list(csv.reader(old_file, delimiter=args.delimiter, quotechar=None))
 
-    write_file(lines, output_path, args.kmer)
+    write_file(lines, output_path, args.kmer, head=args.head, seq_index=args.seq_index, label_index=args.label_index)
         
 
 def main():
@@ -628,7 +628,7 @@ def main():
     )
     parser.add_argument(
         "--task",
-        default="generate_prom",
+        default="",
         type=str,
         help="which task to do",
     )
@@ -645,9 +645,32 @@ def main():
         help="The path of the processed data",
     )
     parser.add_argument(
+        "--delimiter",
+        default=',',
+        type=str,
+        help="The path of the processed data",
+    )
+    parser.add_argument(
+        "--head",
+        action="store_true",
+        help="The path of the processed data",
+    )
+    parser.add_argument(
         "--dev",
         action="store_true",
         help="Use this flag to split data as (8:1:1), else (9:1)",
+    )
+    parser.add_argument(
+        "--seq_index",
+        default=2,
+        type=int,
+        help="index of seq in the original csv file",
+    )
+    parser.add_argument(
+        "--label_index",
+        default=3,
+        type=int,
+        help="index of label in the original csv file",
     )
     args = parser.parse_args()
 

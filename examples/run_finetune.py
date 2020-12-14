@@ -1081,6 +1081,7 @@ def main():
             config=config,
             cache_dir=args.cache_dir if args.cache_dir else None,
         )
+        logger.info('finish loading model')
 
         if args.local_rank == 0:
             torch.distributed.barrier()  # Make sure only the first process in distributed training will download model & vocab

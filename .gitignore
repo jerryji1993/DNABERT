@@ -1,8 +1,10 @@
 examples/runs
 examples/ft
 examples/results
+examples/data_old
 examples/data
 examples/result
+examples/models
 src/transformers/data/__pycache__
 src/transformers/data/metrics/__pycache__
 src/transformers/data/processors/__pycache__
