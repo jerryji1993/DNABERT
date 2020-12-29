@@ -104,7 +104,6 @@ if _has_sklearn:
         elif task_name in ["dna690", "dnapair"]:
             return acc_f1_mcc_auc_aupr_pre_rec(preds, labels, probs)
         elif task_name == "dnaprom":
-            np.save('/home/zhihan/preds.npy',preds)
             return acc_f1_mcc_auc_pre_rec(preds, labels, probs)
             # return {"acc": simple_accuracy(preds, labels)}
         elif task_name == "dnasplice":
