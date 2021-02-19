@@ -33,7 +33,23 @@ def sampling(length, kmer=1, sampling_rate=1):
     return starts, ends
 
 
+def sampling_fix(length, kmer=1, sampling_rate=1, fix_length=10245):
+    times = int(length*sampling_rate/fix_length)
+    starts = []
+    ends = []
+    for i in range(times):
+        cut = fix_length
+        start = np.random.randint(length-6-fix_length)
+        starts.append(start)
+        ends.append(start+cut)
+    
+    return starts, ends
+
+
 def get_kmer_sentence(original_string, kmer=1):
+    if kmer == -1:
+        return original_string
+
     sentence = ""
     original_string = original_string.replace("\n", "")
     for i in range(len(original_string)-kmer):
@@ -44,6 +60,9 @@ def get_kmer_sentence(original_string, kmer=1):
     return sentence
 
 def get_kmer_sequence(original_string, kmer=1):
+    if kmer == -1:
+        return original_string
+
     sequence = []
     original_string = original_string.replace("\n", "")
     for i in range(len(original_string)-kmer):
@@ -66,7 +85,7 @@ def Process(args):
     while line:
         line_length = len(line)
         if args.sampling_rate != 1.0:
-            starts, ends = sampling(length=line_length, kmer=args.kmer, sampling_rate=args.sampling_rate)
+            starts, ends = sampling_fix(length=line_length, kmer=args.kmer, sampling_rate=args.sampling_rate, fix_length=args.length)
             for i in range(len(starts)):
                 new_line = line[starts[i]:ends[i]]
                 sentence = get_kmer_sentence(new_line, kmer=args.kmer)
@@ -97,6 +116,12 @@ def main():
         default=1,
         type=int,
         help="K-mer",
+    )
+    parser.add_argument(
+        "--length",
+        default=10000,
+        type=int,
+        help="Length of the sampled sequence",
     )
     parser.add_argument(
         "--file_path",

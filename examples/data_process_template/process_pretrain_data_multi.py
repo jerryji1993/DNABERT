@@ -23,6 +23,12 @@ def main():
         help="K-mer",
     )
     parser.add_argument(
+        "--length",
+        default=10000,
+        type=int,
+        help="Length of the sampled sequence",
+    )
+    parser.add_argument(
         "--file_path",
         default=None,
         type=str,
@@ -42,8 +48,8 @@ def main():
 
     for i in range(1,23):
         arg_new = copy.deepcopy(args)
-        arg_new.file_path = "/home/zhihan/dna/data/split/" + "GRCh38.chr" + str(i) + ".fa"
-        arg_new.output_path = "/root/data/4_cut/" + "GRCh38.chr" + str(i) + ".fa"
+        arg_new.file_path = "/home/zhihan/data/genome/" + "GRCh38.chr" + str(i) + ".fa"
+        arg_new.output_path = "/home/zhihan/data/sample_5_12400/" + "GRCh38.chr" + str(i) + ".fa"
         # arg_new.file_path = arg_new.output_path + filename
         p.apply_async(Process, args=(arg_new,))
     
