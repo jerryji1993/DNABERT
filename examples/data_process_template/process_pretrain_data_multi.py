@@ -49,7 +49,7 @@ def main():
     for i in range(1,23):
         arg_new = copy.deepcopy(args)
         arg_new.file_path = "/home/zhihan/data/genome/" + "GRCh38.chr" + str(i) + ".fa"
-        arg_new.output_path = "/home/zhihan/data/sample_5_12400/" + "GRCh38.chr" + str(i) + ".fa"
+        arg_new.output_path = "/home/zhihan/data/sample_001_kmer/" + "GRCh38.chr" + str(i) + ".fa"
         # arg_new.file_path = arg_new.output_path + filename
         p.apply_async(Process, args=(arg_new,))
     
