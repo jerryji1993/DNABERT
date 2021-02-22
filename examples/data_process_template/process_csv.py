@@ -100,20 +100,23 @@ def Process(args):
 
     output_path = make_path(args)
 
+    suffix = '.csv' if args.csv else '.tsv'
+    delimiter = ',' if args.csv else '\t'
 
-    f_train = open(os.path.join(output_path, "train.tsv"), 'wt')
-    train_w = csv.writer(f_train, delimiter='\t')
+
+    f_train = open(os.path.join(output_path, "train"+suffix), 'wt')
+    train_w = csv.writer(f_train, delimiter=delimiter)
     train_w.writerow(["sentence", "label"])
     if args.dev:
-        f_dev = open(os.path.join(output_path, "dev.tsv"), 'wt')
-        dev_w = csv.writer(f_dev, delimiter='\t')
+        f_dev = open(os.path.join(output_path, "dev"+suffix), 'wt')
+        dev_w = csv.writer(f_dev, delimiter=delimiter)
         dev_w.writerow(["sentence", "label"])
-        f_test = open(os.path.join(output_path, "test.tsv"), 'wt')
-        test_w = csv.writer(f_test, delimiter='\t')
+        f_test = open(os.path.join(output_path, "test"+suffix), 'wt')
+        test_w = csv.writer(f_test, delimiter=delimiter)
         test_w.writerow(["sentence", "label"])
     else:
-        f_test = open(os.path.join(output_path, "dev.tsv"), 'wt')
-        test_w = csv.writer(f_test, delimiter='\t')
+        f_test = open(os.path.join(output_path, "dev"+suffix), 'wt')
+        test_w = csv.writer(f_test, delimiter=delimiter)
         test_w.writerow(["sentence", "label"])
     
 
@@ -164,6 +167,11 @@ def main():
         "--dev",
         action="store_true",
         help="Use this flag to split data as (8:1:1), else (9:1)",
+    )
+    parser.add_argument(
+        "--csv",
+        action="store_true",
+        help="if output csv file or not, if not, output tsv",
     )
     parser.add_argument(
         "--pair",
