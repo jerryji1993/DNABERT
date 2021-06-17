@@ -129,7 +129,7 @@ Please see the template data at `/example/sample_data/ft/`. If you are trying to
 
 [DNABERT6](https://northwestern.box.com/s/g8m974tr86h0pvnpymxq84f1yxlhnvbi)
 
-Download the pre-trained model in to a directory. (If you would like to following the following examples, please download DNABERT 6). Then unzip the package by running:
+Download the pre-trained model in to a directory. (If you would like to replicate the following examples, please download DNABERT 6). Then unzip the package by running:
 
 ```
 unzip 6-new-12w-0.zip
