@@ -46,18 +46,20 @@ def sampling_fix(length, kmer=1, sampling_rate=1, fix_length=10245):
     return starts, ends
 
 
-def get_kmer_sentence(original_string, kmer=1):
+def get_kmer_sentence(original_string, kmer=1, stride=1):
     if kmer == -1:
         return original_string
 
     sentence = ""
     original_string = original_string.replace("\n", "")
-    for i in range(len(original_string)-kmer):
+    i = 0
+    while i < len(original_string)-kmer:
         sentence += original_string[i:i+kmer] + " "
+        i += stride
     
-    sentence += original_string[-kmer:]
+    return sentence[:-1].strip("\"")
 
-    return sentence
+
 
 def get_kmer_sequence(original_string, kmer=1):
     if kmer == -1:
