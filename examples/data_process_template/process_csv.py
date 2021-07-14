@@ -8,7 +8,7 @@ from process_pretrain_data import get_kmer_sentence
 max_length = 0
 
 def Process_pair(args):
-    random.seed(24)
+    random.seed(42)
 
     root_path = args.file_path.split('/')[-1]
     train_seq1_file = open(args.file_path+"/"+root_path+"_enhancer.fasta", "r")
@@ -41,26 +41,29 @@ def Process_pair(args):
     
     output_path = make_path(args)
 
-    f_train = open(os.path.join(output_path, "train.tsv"), 'wt')
-    train_w = csv.writer(f_train, delimiter='\t')
+    suffix = '.csv' if args.csv else '.tsv'
+    delimiter = ',' if args.csv else '\t'
+
+    f_train = open(os.path.join(output_path, "train" + suffix), 'wt')
+    train_w = csv.writer(f_train, delimiter=delimiter)
     train_w.writerow(["seq1", "seq2", "label"])
     if args.dev:
-        f_dev = open(os.path.join(output_path, "dev.tsv"), 'wt')
-        dev_w = csv.writer(f_dev, delimiter='\t')
+        f_dev = open(os.path.join(output_path, "dev" + suffix), 'wt')
+        dev_w = csv.writer(f_dev, delimiter=delimiter)
         dev_w.writerow(["seq1", "seq2", "label"])
         os.makedirs(os.path.join(output_path, "test"))
-        f_test = open(os.path.join(output_path, "test", "dev.tsv"), 'wt')
-        test_w = csv.writer(f_test, delimiter='\t')
+        f_test = open(os.path.join(output_path, "test", "dev" + suffix), 'wt')
+        test_w = csv.writer(f_test, delimiter=delimiter)
         test_w.writerow(["seq1", "seq2", "label"])
     else:
-        f_test = open(os.path.join(output_path, "dev.tsv"), 'wt')
-        test_w = csv.writer(f_test, delimiter='\t')
+        f_test = open(os.path.join(output_path, "dev" + suffix), 'wt')
+        test_w = csv.writer(f_test, delimiter=delimiter)
         test_w.writerow(["seq1", "seq2", "label"])
 
     def write_file_pair(lines, writer, seq1_index=0, seq2_index=1, label_index=2):
         for line in lines:
-            seq1 = get_kmer_sentence(line[seq1_index],args.kmer)
-            seq2 = get_kmer_sentence(line[seq2_index],args.kmer)
+            seq1 = get_kmer_sentence(line[seq1_index], kmer=args.kmer, stride=args.stride)
+            seq2 = get_kmer_sentence(line[seq2_index], kmer=args.kmer, stride=args.stride)
             writer.writerow([seq1, seq2, str(int(line[label_index]))])
 
     write_file_pair(train_lines, train_w)
@@ -124,7 +127,7 @@ def Process(args):
     def write_file(lines, writer, seq_index=2, label_index=3):
         global max_length
         for line in lines:
-            sentence = get_kmer_sentence(line[seq_index],args.kmer)
+            sentence = get_kmer_sentence(line[seq_index], kmer=args.kmer, stride=args.stride)
             if len(sentence.split()) > max_length:
                 max_length = len(sentence.split())
             writer.writerow([sentence, str(line[label_index])])
@@ -150,6 +153,12 @@ def main():
         default=1,
         type=int,
         help="K-mer",
+    )
+    parser.add_argument(
+        "--stride",
+        default=1,
+        type=int,
+        help="stride in getting kmer sequence",
     )
     parser.add_argument(
         "--file_path",
