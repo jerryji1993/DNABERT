@@ -1,3 +1,4 @@
+*.pyc
 examples/runs
 examples/ft
 examples/ft_new
