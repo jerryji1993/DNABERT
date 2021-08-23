@@ -121,13 +121,13 @@ Please see the template data at `/example/sample_data/ft/`. If you are trying to
 
 #### 3.2 Download pre-trained DNABERT
 
-[DNABERT3](https://northwestern.box.com/s/s492dj5g2wwotdh40v9uv5gwikqi246q)
+[DNABERT3](https://drive.google.com/file/d/1nVBaIoiJpnwQxiz4dSq6Sv9kBKfXhZuM/view?usp=sharing)
 
-[DNABERT4](https://northwestern.box.com/s/rmmepi2upskgob4fgeohdwh1r5w37oqo)
+[DNABERT4](https://drive.google.com/file/d/1V7CChcC6KgdJ7Gwdyn73OS6dZR_J-Lrs/view?usp=sharing)
 
-[DNABERT5](https://northwestern.box.com/s/6wjib1tnnt7efj5yzmxc3da0so800c6c)
+[DNABERT5](https://drive.google.com/file/d/1KMqgXYCzrrYD1qxdyNWnmUYPtrhQqRBM/view?usp=sharing)
 
-[DNABERT6](https://northwestern.box.com/s/g8m974tr86h0pvnpymxq84f1yxlhnvbi)
+[DNABERT6](https://drive.google.com/file/d/1BJjqb5Dl2lNMg2warsFQ0-Xvn1xxfFXC/view?usp=sharing)
 
 Download the pre-trained model in to a directory. (If you would like to replicate the following examples, please download DNABERT 6). Then unzip the package by running:
 
