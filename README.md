@@ -228,6 +228,7 @@ python run_finetune.py \
     --task_name dnaprom \
     --do_visualize \
     --visualize_data_dir $DATA_PATH \
+    --visualize_models $KMER \
     --data_dir $DATA_PATH \
     --max_seq_length 81 \
     --per_gpu_pred_batch_size=16   \
