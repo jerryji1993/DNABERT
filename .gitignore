@@ -1,6 +1,9 @@
 *.pyc
+cache*
+dna_cache*
 examples/runs
 examples/ft
+examples/output*
 examples/ft_new
 examples/results
 examples/data_old

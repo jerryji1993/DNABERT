@@ -146,8 +146,8 @@ cd examples
 
 export KMER=6
 export MODEL_PATH=PATH_TO_THE_PRETRAINED_MODEL
-export DATA_PATH=sample_data/ft/prom-core/$KMER
-export OUTPUT_PATH=./ft/prom-core/$KMER
+export DATA_PATH=sample_data/ft/$KMER
+export OUTPUT_PATH=./ft/$KMER
 
 python run_finetune.py \
     --model_type dna \
@@ -157,11 +157,11 @@ python run_finetune.py \
     --do_train \
     --do_eval \
     --data_dir $DATA_PATH \
-    --max_seq_length 75 \
-    --per_gpu_eval_batch_size=16   \
-    --per_gpu_train_batch_size=16   \
+    --max_seq_length 100 \
+    --per_gpu_eval_batch_size=32   \
+    --per_gpu_train_batch_size=32   \
     --learning_rate 2e-4 \
-    --num_train_epochs 3.0 \
+    --num_train_epochs 5.0 \
     --output_dir $OUTPUT_PATH \
     --evaluate_during_training \
     --logging_steps 100 \
@@ -183,9 +183,9 @@ After the model is fine-tuned, we can get predictions by running
 
 ```$
 export KMER=6
-export MODEL_PATH=./ft/prom-core/$KMER
-export DATA_PATH=sample_data/ft/prom-core/$KMER
-export PREDICTION_PATH=./result/prom-core/$KMER
+export MODEL_PATH=./ft/$KMER
+export DATA_PATH=sample_data/ft/$KMER
+export PREDICTION_PATH=./result/$KMER
 
 python run_finetune.py \
     --model_type dna \
@@ -217,9 +217,9 @@ calculate with only one model (For example, DNABERT6)
 
 ```
 export KMER=6
-export MODEL_PATH=./ft/prom-core/$KMER
-export DATA_PATH=sample_data/ft/prom-core/$KMER
-export PREDICTION_PATH=./result/prom-core/$KMER
+export MODEL_PATH=./ft/$KMER
+export DATA_PATH=sample_data/ft/$KMER
+export PREDICTION_PATH=./result/$KMER
 
 python run_finetune.py \
     --model_type dna \
@@ -251,9 +251,9 @@ Once the attention scores are generated, we can proceed further to perform motif
 cd ../motif
 
 export KMER=6
-export DATA_PATH=../examples/sample_data/ft/prom-core/$KMER
-export PREDICTION_PATH=../examples/result/prom-core/$KMER
-export MOTIF_PATH=./result/prom-core/$KMER
+export DATA_PATH=../examples/sample_data/ft/$KMER
+export PREDICTION_PATH=../examples/result/$KMER
+export MOTIF_PATH=./result/$KMER
 
 python find_motifs.py \
     --data_dir $DATA_PATH \
@@ -277,20 +277,20 @@ Once such a file is created, we can perform mutation on the sequences:
 
 ```
 cd ../SNP
-python mutate_seqs.py ./../examples/sample_data/ft/prom-core/6/dev.tsv ./examples/ --mut_file ./example_mut_file.txt --k 6
+python mutate_seqs.py ./../examples/sample_data/ft/6/dev.tsv ./examples/ --mut_file ./example_mut_file.txt --k 6
 ```
 Alternatively, we can choose to leave the `--mut_file` argument blank, where the program would try to perform substitution of all bases to the four possible nucleotides ('A', 'T', 'C', or 'G') for all sequences. This would be useful for plotting a mutation heatmap as included in the paper. **Note that this would be slow if the `dev.tsv` contains a lot of sequences or the input sequences are very long, as the command would try to perform mutation on all possible locations of them**.
 
 ```
 cd ../SNP
-python mutate_seqs.py ./../examples/sample_data/ft/prom-core/6/dev.tsv ./examples/ --k 6
+python mutate_seqs.py ./../examples/sample_data/ft/6/dev.tsv ./examples/ --k 6
 ```
 
 After that, we can again predict on the generated sequences. **Note: if you have insertion/deletions in your `mut_file.txt`, consider changing the `max_seq_length` we use when making predictions.**
 
 ```
 export KMER=6
-export MODEL_PATH=../examples/ft/prom-core/$KMER
+export MODEL_PATH=../examples/ft/$KMER
 export DATA_PATH=examples
 export PREDICTION_PATH=examples
 
@@ -313,8 +313,8 @@ This will again create `pred_results.npy` file under the `$PREDICTION_PATH`. Onc
 
 ```
 python SNP.py \
-    --orig_seq_file ../examples/sample_data/ft/prom-core/6/dev.tsv \
-    --orig_pred_file ../examples/result/prom-core/6/pred_results.npy \
+    --orig_seq_file ../examples/sample_data/ft/6/dev.tsv \
+    --orig_pred_file ../examples/result/6/pred_results.npy \
     --mut_seq_file examples/dev.tsv \
     --mut_pred_file examples/pred_results.npy \
     --save_file_dir examples

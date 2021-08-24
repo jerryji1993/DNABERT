@@ -23,6 +23,7 @@ def write_file(lines, path, kmer, head=True, seq_index=0, label_index=1):
                     label = str(line[label_index])
                 tsv_w.writerow([sentence, label]) 
 
+
 def Shuffle(args):
     old_file =  open(args.file_path, "r", encoding="utf-8-sig")
     old_lines = list(csv.reader(old_file, delimiter="\t", quotechar=None))[1:]
