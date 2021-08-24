@@ -135,7 +135,8 @@ Download the pre-trained model in to a directory. (If you would like to replicat
 unzip 6-new-12w-0.zip
 ```
 
-We also provide a model that is fine-tuned on the sample dataset for prediction/visulization/motif_analysis.
+We also provide a model with `KMER=6` that is fine-tuned on the sample dataset for prediction/visulization/motif_analysis. If you use the fine-tuned model instead of fine-tuning a model by your self, please download the fine-tuned and put it under `examples/ft/6`. 
+
 [Fine-tuned Model](https://drive.google.com/drive/folders/15wFcukTv3ecPw9_25dcOv-bZmj-8d_-6?usp=sharing)
 
 
