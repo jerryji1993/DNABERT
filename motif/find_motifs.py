@@ -83,7 +83,7 @@ def main():
 
     atten_scores = np.load(os.path.join(args.predict_dir,"atten.npy"))
     pred = np.load(os.path.join(args.predict_dir,"pred_results.npy"))
-    dev = pd.read_csv(os.path.join(args.data_dir,"dev.tsv"),sep='\t',header=None)
+    dev = pd.read_csv(os.path.join(args.data_dir,"dev.tsv"),sep='\t',header=0)
     dev.columns = ['sequence','label']
     dev['seq'] = dev['sequence'].apply(utils.kmer2seq)
     dev_pos = dev[dev['label'] == 1]

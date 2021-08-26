@@ -501,6 +501,7 @@ def motif_analysis(pos_seqs,
     return_idx = False
     if 'return_idx' in kwargs:
         return_idx = kwargs['return_idx']
+        kwargs.pop('return_idx')
     
     if verbose:
         print("* Filtering motifs by hypergeometric test")
