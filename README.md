@@ -297,7 +297,7 @@ export MODEL_PATH=../examples/ft/$KMER
 export DATA_PATH=examples
 export PREDICTION_PATH=examples
 
-python ../examples/run_finetune.py \
+python run_finetune.py \
     --model_type dna \
     --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
@@ -308,7 +308,6 @@ python ../examples/run_finetune.py \
     --per_gpu_pred_batch_size=128   \
     --output_dir $MODEL_PATH \
     --predict_dir $PREDICTION_PATH \
-    --fp16 \
     --n_process 48
 ```
 
