@@ -297,7 +297,7 @@ export MODEL_PATH=../examples/ft/$KMER
 export DATA_PATH=examples
 export PREDICTION_PATH=examples
 
-python run_finetune.py \
+python ../examples/run_finetune.py \
     --model_type dna \
     --tokenizer_name=dna$KMER \
     --model_name_or_path $MODEL_PATH \
