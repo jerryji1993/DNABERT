@@ -54,8 +54,8 @@ def main():
     args = parser.parse_args()
 
     # original sequences
-    orig_pred = np.load(args.orig_pred_file)
-    orig_dev = pd.read_csv(args.orig_seq_file,sep='\t',header=None)
+    # orig_pred = np.load(args.orig_pred_file)
+    orig_dev = pd.read_csv(args.orig_seq_file,sep='\t',header=0)
     orig_dev.columns = ['sequence','label']
     orig_dev['orig_seq'] = orig_dev['sequence'].apply(utils.kmer2seq)
     orig_dev['idx'] = orig_dev.index
@@ -64,16 +64,16 @@ def main():
     orig_dev['orig_pred'] = orig_pred
     
     # mutated sequences
-    mut_pred = np.load(args.mut_pred_file)
-    mut_dev = pd.read_csv(args.mut_seq_file,sep='\t',header=None)
-    mut_dev.columns = ['sequence','idx']
+    # mut_pred = np.load(args.mut_pred_file)
+    mut_dev = pd.read_csv(args.mut_seq_file,sep='\t',header=0)
+    mut_dev.columns = ['sequence','label','idx'] #ignore label
     mut_dev['mut_seq'] = mut_dev['sequence'].apply(utils.kmer2seq)
     
     mut_pred = np.load(args.mut_pred_file)
     mut_dev['mut_pred'] = mut_pred
     
     # merge
-    dev = mut_dev.merge(orig_dev[['idx','orig_seq','orig_pred']],
+    dev = pd.merge(orig_dev[['idx','orig_seq','orig_pred']],
                         mut_dev[['idx','mut_seq','mut_pred']],
                         on='idx'
                        )

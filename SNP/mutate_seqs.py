@@ -75,12 +75,13 @@ def main():
     
     mutated_dev = {'index':[],'seq':[]}
     
-    dev = pd.read_csv(args.seq_file,sep='\t',header=None)
+    dev = pd.read_csv(args.seq_file,sep='\t',header=0)
     dev.columns = ['sequence','label']
     dev['seq'] = dev['sequence'].apply(utils.kmer2seq)
     
     if args.mut_file is not None:
         mut_file = pd.read_csv(args.mut_file, sep='\t',header=None)
+        mut_file = mut_file.fillna('')
         mut_file.columns = ['idx','start', 'end', 'allele']
         mut_file['idx'] = mut_file['idx'].astype(int)
         mut_file['start'] = mut_file['start'].astype(int)
@@ -98,15 +99,19 @@ def main():
             seq = row['seq']
             for j in range(len(seq)):
                 mut_seq = mutate(seq, j, j+1)
-                mut_seq = utils.seq2kmer(mut_seq, args.k)
+                mut_seq = [utils.seq2kmer(seq, args.k) for seq in mut_seq]
                 idx = [i] * 4
                 mutated_dev['index'].extend(idx)
                 mutated_dev['seq'].extend(mut_seq)
-    
+
     mutated_dev = pd.DataFrame.from_dict(mutated_dev)
     mutated_dev = mutated_dev[['seq','index']]
+    mutated_dev.columns = ['sequence','index']
+    mutated_dev['label'] = 0
+    mutated_dev.iloc[0, mutated_dev.columns.get_loc('label')] = 1
+    mutated_dev = mutated_dev[['sequence','label','index']]
             
-    mutated_dev.to_csv(os.path.join(args.save_file_dir,'dev.tsv'),sep='\t',header=False, index=False)
+    mutated_dev.to_csv(os.path.join(args.save_file_dir,'dev.tsv'),sep='\t',header=True, index=False)
     
 
 if __name__ == "__main__":
