@@ -6,7 +6,7 @@ import os
 import numpy as np
 
 from transformers import BertTokenizer, BertModel, DNATokenizer
-from process_pretrain_data import get_kmer_sentence
+from data_process_template.process_pretrain_data import get_kmer_sentence
 
 
 def format_attention(attention):
@@ -99,8 +99,8 @@ def Visualize(args):
     # plot        
     sns.set()
     ax = sns.heatmap(scores, cmap='YlGnBu', vmin=0)
+    plt.savefig(args.fig_output+'results.png')
     plt.show()
-
     
 
 
@@ -138,9 +138,15 @@ def main():
     )
     parser.add_argument(
         "--sequence",
-        default=None,
+        default=SEQUENCE,
         type=str,
         help="the sequence for visualize",
+    )
+    parser.add_argument(
+        "--fig_output",
+        default="./results/",
+        type=str,
+        help="the address for saving the visualized map"
     )
 
     args = parser.parse_args()
