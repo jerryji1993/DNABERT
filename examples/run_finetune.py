@@ -27,6 +27,8 @@ import random
 from multiprocessing import Pool
 from typing import Dict, List, Tuple
 from copy import deepcopy
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 import numpy as np
 import torch
@@ -1199,6 +1201,11 @@ def main():
         all_probs = all_probs/float(len(visualization_models))
         np.save(os.path.join(args.predict_dir, "atten.npy"), scores)
         np.save(os.path.join(args.predict_dir, "pred_results.npy"), all_probs)
+        
+        # show the map it in a plot
+        sns.set()
+        ax = sns.heatmap(scores, cmap='YlGnBu', vmin=0)
+        plt.show()
 
     # ensemble prediction
     if args.do_ensemble_pred and args.local_rank in [-1, 0]:

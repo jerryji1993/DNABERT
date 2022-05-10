@@ -1,0 +1,3 @@
+DO NOT INSTALL the package transformers. The transformers used in this project is different than the hugging face one
+conda install --channel conda-forge --channel bioconda pybedtools
+conda install pandas
