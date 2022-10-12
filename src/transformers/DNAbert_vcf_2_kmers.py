@@ -56,7 +56,7 @@ class get_seq(object):
         if str(str_ref) == str(self.ref):
             return True
         else:
-            print("ERROR: Ref seq does not match")
+            print("Warning: Ref seq does not match {0}".format(str_ref))
             exit()
 
     def generate_mutant(self):
@@ -102,45 +102,51 @@ def sliding_windown(seq, kmer):
 
 
 def parse_vcf(vcf_file, kmer, seq_length, reference, logger):
-    with open("DNAbert_input_mutant.txt", 'w') as fout, open("DNAbert_input_reference.txt", 'w') as fref:
+    with open("DNAbert_input_mutant.txt", 'w') as fout, \
+open("DNAbert_input_reference.txt", 'w') as fref:
         vcf_reader =  vcf.Reader(open(vcf_file, 'r'))
+        vcf_writer = vcf.Writer(open("DNABert_input_filtered.vcf", 'w'), vcf_reader)
         for record in vcf_reader:
             if record.ALT[0] is None:
                 pass
             else:
-                if record.is_deletion:
-                    logger.info("Parsing a deletion chrom {0}, Pos {1}, REF {2}, ALT {3}".format(record.CHROM, 
-                                                                                                 record.POS,
-                                                                                                 record.REF,
-                                                                                                 record.ALT))
-                    ext_seq, ref_seq = reference_sequence(reference, seq_length, 
-                                                          record.CHROM, record.POS, len(record.REF) -1)
-                    get_results = get_seq(ext_seq, record.REF, record.ALT[0])
-                    mutant_seq = get_results.generate_del()
-                    #                reference_seq = get_results.get_ref()
-                    logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(record.CHROM, 
-                                                                      record.POS, 
-                                                                      record.REF, 
-                                                                      record.ALT[0], 
-                                                                      ref_seq, mutant_seq))
-                    fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                    fref.write(sliding_windown(ref_seq, kmer) + '\n')
+                if len(record.REF) > 3 and len(record.ALT[0]) > 3:
+                    pass
                 else:
-                    ref_seq = reference_sequence(reference, seq_length,
-                                                 record.CHROM, record.POS)
-                    get_results = get_seq(ref_seq, record.REF, record.ALT[0])
-                    mutant_seq = get_results.generate_mutant()
-                    #                reference_seq = get_results.get_ref()          
-                    logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(record.CHROM, 
-                                                                      record.POS, 
-                                                                      record.REF, 
-                                                                      record.ALT[0], 
-                                                                      ref_seq, mutant_seq))
-                    #                print(ref_seq, mutant_seq, sliding_windown(mutant_seq, kmer))
-                    #                print(sliding_windown(mutant_seq, kmer))
-                    fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                    fref.write(sliding_windown(ref_seq, kmer) + '\n')
-
+                    if record.is_deletion:
+                        logger.info("Parsing a deletion chrom {0}, Pos {1}, REF {2}, ALT {3}".format(record.CHROM, 
+                                                                                                     record.POS,
+                                                                                                     record.REF,
+                                                                                                     record.ALT))
+                        ext_seq, ref_seq = reference_sequence(reference, seq_length, 
+                                                              record.CHROM, record.POS, len(record.REF) -1)
+                        get_results = get_seq(ext_seq, record.REF, record.ALT[0])
+                        mutant_seq = get_results.generate_del()
+                        #                reference_seq = get_results.get_ref()
+                        logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(record.CHROM, 
+                                                                          record.POS, 
+                                                                          record.REF, 
+                                                                          record.ALT[0], 
+                                                                          ref_seq, mutant_seq))
+                        fout.write(sliding_windown(mutant_seq, kmer) + '\n')
+                        fref.write(sliding_windown(ref_seq, kmer) + '\n')
+                        vcf_writer.write_record(record)
+                    else:
+                        ref_seq = reference_sequence(reference, seq_length,
+                                                     record.CHROM, record.POS)
+                        get_results = get_seq(ref_seq, record.REF, record.ALT[0])
+                        mutant_seq = get_results.generate_mutant()
+                        #                reference_seq = get_results.get_ref()          
+                        logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(record.CHROM, 
+                                                                          record.POS, 
+                                                                          record.REF, 
+                                                                          record.ALT[0], 
+                                                                          ref_seq, mutant_seq))
+                        #                print(ref_seq, mutant_seq, sliding_windown(mutant_seq, kmer))
+                        #                print(sliding_windown(mutant_seq, kmer))
+                        fout.write(sliding_windown(mutant_seq, kmer) + '\n')
+                        fref.write(sliding_windown(ref_seq, kmer) + '\n')
+                        vcf_writer.write_record(record)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
