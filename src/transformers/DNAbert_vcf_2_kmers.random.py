@@ -17,18 +17,20 @@ import datetime
 import logging
 import random
 
-def run(vcf_file, kmer, seq_length, reference, random_insert):
+def run(vcf_file, kmer, seq_length, reference, random_insert, duplicates):
     logger = configure_logger()
     if not random_insert:
         compute_string = parse_vcf(vcf_file, 
                                    kmer, 
                                    seq_length, 
-                                   reference, logger)
+                                   reference, 
+                                   duplicates, logger)
     else:
         compute_string = parse_vcf(vcf_file,
                                    kmer,
                                    seq_length,
-                                   reference, logger)
+                                   reference, 
+                                   duplicates, logger)
 
 def configure_logger():
     """
@@ -63,8 +65,8 @@ class get_seq(object):
         if str(str_ref) == str(self.ref):
             return True
         else:
-            print("Warning: Ref seq base {0} does not match the ref in vcf {1}".format(str_ref, self.ref))
-            exit()
+            print("Warning: Ref seq base {0} does not match the ref in vcf {1} for seq {2}".format(str_ref, self.ref, self.seq))
+#            exit()
 
     def generate_mutant(self):
         check_ref = self.get_ref()
@@ -106,7 +108,6 @@ def reference_sequence_random(reference,
     logger.info("position of the insert is {0}".format(insert))
     pad_5 = int(seq_length) 
     pad_3 = int(seq_length) - insert
-    print(chrom, pos, seq_length, insert, pad_3)
     if deletion_length:
         start =  int(pos) - insert
         ex_stop = int(pos) + pad_3 + int(deletion_length)
@@ -163,7 +164,7 @@ def execute_kmers(reference, seq_length,chrom, pos, ref, alt, logger,
 
 
 def parse_vcf(vcf_file, kmer, seq_length, 
-              reference, logger, random=False):
+              reference, duplicates, logger, random=False):
     with open("DNAbert_input_mutant.txt", 'w') as fout, \
 open("DNAbert_input_reference.txt", 'w') as fref:
         vcf_reader =  vcf.Reader(open(vcf_file, 'r'))
@@ -172,45 +173,49 @@ open("DNAbert_input_reference.txt", 'w') as fref:
             if record.ALT[0] is None:
                 pass
             else:
-                if len(record.REF) > 3 and len(record.ALT[0]) > 3:
+                if len(record.REF) > 2 and len(record.ALT[0]) > 2:
                     pass
                 else:
                     if record.is_deletion:
-                        ref_seq, mutant_seq = execute_kmers(reference,
-                                                   seq_length,
-                                                   record.CHROM,
-                                                   record.POS,
-                                                   record.REF,
-                                                   record.ALT[0],logger, True)                                                   
-                        fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                        fref.write(sliding_windown(ref_seq, kmer) + '\n')
-                        vcf_writer.write_record(record)
+                        for q in range(duplicates):
+                            ref_seq, mutant_seq = execute_kmers(reference,
+                                                                seq_length,
+                                                                record.CHROM,
+                                                                record.POS,
+                                                                record.REF,
+                                                                record.ALT[0],logger, True)                                                   
+                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
+                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
+                            vcf_writer.write_record(record)
                     else:
-                        ref_seq, mutant_seq = execute_kmers(reference,
-                                                   seq_length,
-                                                   record.CHROM,
-                                                   record.POS,
-                                                   record.REF,
-                                                   record.ALT[0], logger)
-                        fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                        fref.write(sliding_windown(ref_seq, kmer) + '\n')
-                        vcf_writer.write_record(record)                        
+                        for q in range(duplicates):
+                            ref_seq, mutant_seq = execute_kmers(reference,
+                                                                seq_length,
+                                                                record.CHROM,
+                                                                record.POS,
+                                                                record.REF,
+                                                                record.ALT[0], logger)
+                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
+                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
+                            vcf_writer.write_record(record)                        
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('-v', dest='vcf_file',
                         help="vcf file containing the variants to mutate", required=True)
     parser.add_argument('-k', dest='kmer',
-                        help="length of kmer to generate a sequence", required=True, type=int)
+                        help="length of kmer to generate a sequence, default=6", default=6, type=int)
     parser.add_argument('-s', dest='seq_length',
-                        help="length of the string sequence to create kmers", default=512, type=int)
+                        help="length of the string sequence to create kmers, default=510", default=510, type=int)
+    parser.add_argument('-d', dest='duplicates',
+                        help="total number of duplicates, default=1", default=1, type=int)
     parser.add_argument('-r', dest='reference',default="/research/bsi/data/refdata/app/gatk_bundle/human/2.8/b37/processed/2015_11_04/allchr.fa",
                         help="reference genome")
     parser.add_argument('-x', dest='random_insert', action='store_false',
                         help="flag to invoke random insert of the mutation, otherwise it would place it in the center of the sequence")
     args = parser.parse_args()
     run(args.vcf_file, args.kmer, 
-        args.seq_length, args.reference, args.random_insert)
+        args.seq_length, args.reference, args.random_insert, args.duplicates)
 
 
  
