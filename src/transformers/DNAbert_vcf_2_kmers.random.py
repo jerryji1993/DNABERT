@@ -184,6 +184,9 @@ open("DNAbert_input_reference.txt", 'w') as fref:
                                                                 record.POS,
                                                                 record.REF,
                                                                 record.ALT[0],logger, True)                                                   
+                            fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
+                            print(fa_header)
+                            print(mutant_seq)
                             fout.write(sliding_windown(mutant_seq, kmer) + '\n')
                             fref.write(sliding_windown(ref_seq, kmer) + '\n')
                             vcf_writer.write_record(record)
@@ -195,6 +198,9 @@ open("DNAbert_input_reference.txt", 'w') as fref:
                                                                 record.POS,
                                                                 record.REF,
                                                                 record.ALT[0], logger)
+                            fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
+                            print(fa_header)
+                            print(mutant_seq)
                             fout.write(sliding_windown(mutant_seq, kmer) + '\n')
                             fref.write(sliding_windown(ref_seq, kmer) + '\n')
                             vcf_writer.write_record(record)                        
