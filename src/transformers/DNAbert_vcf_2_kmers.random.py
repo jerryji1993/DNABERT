@@ -10,27 +10,28 @@ the sequence is created based on the sequence length from the input
 import csv
 import argparse
 import pyfaidx
-import vcf
+from cyvcf2 import VCF, Writer
 from pyfaidx import Fasta
 import time
 import datetime
 import logging
 import random
+import gzip
 
-def run(vcf_file, kmer, seq_length, reference, random_insert, duplicates):
+def run(vcf_file, kmer, seq_length, reference, outdir, duplicates, random_insert):
     logger = configure_logger()
     if not random_insert:
         compute_string = parse_vcf(vcf_file, 
                                    kmer, 
                                    seq_length, 
                                    reference, 
-                                   duplicates, logger)
+                                   duplicates, outdir, logger)
     else:
         compute_string = parse_vcf(vcf_file,
                                    kmer,
                                    seq_length,
                                    reference, 
-                                   duplicates, logger)
+                                   duplicates, outdir, logger)
 
 def configure_logger():
     """
@@ -164,11 +165,15 @@ def execute_kmers(reference, seq_length,chrom, pos, ref, alt, logger,
 
 
 def parse_vcf(vcf_file, kmer, seq_length, 
-              reference, duplicates, logger, random=False):
-    with open("DNAbert_input_mutant.txt", 'w') as fout, \
-open("DNAbert_input_reference.txt", 'w') as fref:
-        vcf_reader =  vcf.Reader(open(vcf_file, 'r'))
-        vcf_writer = vcf.Writer(open("DNABert_input_filtered.vcf", 'w'), vcf_reader)
+              reference, duplicates, outdir, logger, random=False):
+    mutant_out = outdir + "/" + "DNAbert_input_reference_mutant.txt.gz"
+#    reference_out = outdir + "/" + "DNAbert_input_reference.txt.gz"
+    out_vcf = outdir + "/" + "DNAbert_input_filtered.vcf"
+    with gzip.open(mutant_out, 'wt', compresslevel=6) as fout:
+        vcf_reader =  VCF(vcf_file)
+        fname = out_vcf
+        vcf_writer = Writer(fname, vcf_reader)
+        fout.write("seq_ref\tseq_mut\n")
         for record in vcf_reader:
             if record.ALT[0] is None:
                 pass
@@ -185,10 +190,10 @@ open("DNAbert_input_reference.txt", 'w') as fref:
                                                                 record.REF,
                                                                 record.ALT[0],logger, True)                                                   
                             fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
-                            print(fa_header)
-                            print(mutant_seq)
-                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
+ #                           print(fa_header)
+ #                           print(mutant_seq)
+                            fout.write(sliding_windown(ref_seq, kmer) + '\t' + sliding_windown(mutant_seq, kmer) +'\n')
+#                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
                             vcf_writer.write_record(record)
                     else:
                         for q in range(duplicates):
@@ -199,10 +204,11 @@ open("DNAbert_input_reference.txt", 'w') as fref:
                                                                 record.REF,
                                                                 record.ALT[0], logger)
                             fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
-                            print(fa_header)
-                            print(mutant_seq)
-                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
+#                            print(fa_header)
+#                            print(mutant_seq)
+                            fout.write(sliding_windown(ref_seq, kmer) + '\t' + sliding_windown(mutant_seq, kmer) +'\n')
+#                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
+#                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
                             vcf_writer.write_record(record)                        
 
 if __name__ == "__main__":
@@ -217,11 +223,13 @@ if __name__ == "__main__":
                         help="total number of duplicates, default=1", default=1, type=int)
     parser.add_argument('-r', dest='reference',default="/research/bsi/data/refdata/app/gatk_bundle/human/2.8/b37/processed/2015_11_04/allchr.fa",
                         help="reference genome")
+    parser.add_argument('-o', dest='outdir',required=True,
+                        help="path to output directory")
     parser.add_argument('-x', dest='random_insert', action='store_false',
                         help="flag to invoke random insert of the mutation, otherwise it would place it in the center of the sequence")
     args = parser.parse_args()
     run(args.vcf_file, args.kmer, 
-        args.seq_length, args.reference, args.random_insert, args.duplicates)
+        args.seq_length, args.reference, args.outdir, args.duplicates, args.random_insert)
 
 
  
