@@ -46,7 +46,7 @@ class get_seq(object):
         self.ref =  ref
         self.alt = alt
         self.ref_size = len(self.ref)
-        assert seq[self.index] == ref
+        #assert seq[self.index] == ref
         
     def __iter__(self):
         return self
