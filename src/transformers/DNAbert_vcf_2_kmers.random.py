@@ -7,16 +7,13 @@ the sequence is created based on the sequence length from the input
 """
 
 
-import csv
 import argparse
-import pyfaidx
-from cyvcf2 import VCF, Writer
-from pyfaidx import Fasta
+from pysam import FastaFile, VariantFile
 import time
-import datetime
 import logging
 import random
 import gzip
+from typing import Tuple, Union
 
 def run(vcf_file, kmer, seq_length, reference, outdir, duplicates, random_insert):
     logger = configure_logger()
@@ -84,14 +81,14 @@ def reference_sequence(reference,
                        chrom, 
                        pos, 
                        deletion_length=False):
-    genome = Fasta(reference)
+    genome = FastaFile(reference)
     pad = int(seq_length/2)
     if deletion_length:
         start =  int(pos) - pad
         ex_stop = int(pos) + pad + int(deletion_length)
         stop = int(pos) + pad
-        del_seq = genome[chrom][start:ex_stop]
-        seq = genome[chrom][start:stop]
+        del_seq = genome.fetch(chrom, start, ex_stop)
+        seq = genome.fetch(chrom, start, stop)
         return(del_seq, seq)
     else:
         start =  int(pos) - pad
@@ -103,8 +100,8 @@ def reference_sequence_random(reference,
                               seq_length, 
                               chrom, 
                               pos, logger,
-                              deletion_length=False):
-    genome = Fasta(reference)
+                              deletion_length=None) -> Union[Tuple[str, str, int], Tuple[str, int]]:
+    genome = FastaFile(reference)
     insert = random.randint(1, seq_length)
     logger.info("position of the insert is {0}".format(insert))
     pad_5 = int(seq_length) 
@@ -113,13 +110,13 @@ def reference_sequence_random(reference,
         start =  int(pos) - insert
         ex_stop = int(pos) + pad_3 + int(deletion_length)
         stop = int(pos) + pad_3
-        del_seq = genome[chrom][start:ex_stop]
-        seq = genome[chrom][start:stop]
+        del_seq = genome.fetch(chrom, start, ex_stop)
+        seq = genome.fetch(chrom, start, stop)
         return(del_seq, seq, insert)
     else:
         start =  int(pos) - insert
         stop = int(pos) + pad_3
-        seq = genome[chrom][start:stop]
+        seq = genome.fetch(chrom, start, stop)
         return(seq, insert)
 
 
@@ -143,12 +140,12 @@ def execute_kmers(reference, seq_length,chrom, pos, ref, alt, logger,
                                                      chrom, pos, logger, len(ref)-1)
         get_results = get_seq(ext_seq, ref, alt, index)
         mutant_seq = get_results.generate_del()
-        logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(chrom, 
-                                                          pos, 
-                                                          ref, 
-                                                          alt, 
-                                                          ref_seq, mutant_seq))
-        return ref_seq, mutant_seq
+        # logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(chrom, 
+        #                                                   pos, 
+        #                                                   ref, 
+        #                                                   alt, 
+        #                                                   ref_seq, mutant_seq))
+        return ref_seq, mutant_seq, index
     else:
 #        ref_seq = reference_sequence(reference, seq_length,
 #                                     chrom, pos)
@@ -156,60 +153,42 @@ def execute_kmers(reference, seq_length,chrom, pos, ref, alt, logger,
                                             chrom, pos, logger)
         get_results = get_seq(ref_seq, ref, alt, index)
         mutant_seq = get_results.generate_mutant()
-        logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(chrom, 
-                                                          pos, 
-                                                          ref, 
-                                                          alt, 
-                                                          ref_seq, mutant_seq))
-        return ref_seq, mutant_seq
-
+        # logger.info("{0}, {1}, {2}, {3}, {4}, {5}".format(chrom, 
+        #                                                   pos, 
+        #                                                   ref, 
+        #                                                   alt, 
+        #                                                   ref_seq, mutant_seq))
+        return ref_seq, mutant_seq, index
 
 def parse_vcf(vcf_file, kmer, seq_length, 
               reference, duplicates, outdir, logger, random=False):
-    mutant_out = outdir + "/" + "DNAbert_input_reference_mutant.txt.gz"
-#    reference_out = outdir + "/" + "DNAbert_input_reference.txt.gz"
-    out_vcf = outdir + "/" + "DNAbert_input_filtered.vcf"
-    with gzip.open(mutant_out, 'wt', compresslevel=6) as fout:
-        vcf_reader =  VCF(vcf_file)
-        fname = out_vcf
-        vcf_writer = Writer(fname, vcf_reader)
+    out_seq = outdir + "/" + "DNAbert_input_reference_mutant.txt.gz"
+    out_vcf = outdir + "/" + "DNAbert_input_filtered.vcf.gz"
+    with gzip.open(out_seq, 'wt', compresslevel=6) as fout:
+        vcf_in = VariantFile(vcf_file, 'r')
+        vcf_in.header.add_meta('INFO', items=[('ID',"INSERT"), ('Number',1), ('Type','Integer'), ('Description','Variant insertion position')])
+        vcf_out = VariantFile(out_vcf, 'w', header=vcf_in.header)
         fout.write("seq_ref\tseq_mut\n")
-        for record in vcf_reader:
-            if record.ALT[0] is None:
+        for rec in vcf_in:
+            if rec.alts is None or rec.alts[0] is None:
                 pass
             else:
-                if len(record.REF) > 2 and len(record.ALT[0]) > 2:
+                if len(rec.ref) > 2 and len(rec.alts[0]) > 2:
                     pass
                 else:
-                    if record.is_deletion:
-                        for q in range(duplicates):
-                            ref_seq, mutant_seq = execute_kmers(reference,
-                                                                seq_length,
-                                                                record.CHROM,
-                                                                record.POS,
-                                                                record.REF,
-                                                                record.ALT[0],logger, True)                                                   
-                            fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
- #                           print(fa_header)
- #                           print(mutant_seq)
-                            fout.write(sliding_windown(ref_seq, kmer) + '\t' + sliding_windown(mutant_seq, kmer) +'\n')
-#                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
-                            vcf_writer.write_record(record)
-                    else:
-                        for q in range(duplicates):
-                            ref_seq, mutant_seq = execute_kmers(reference,
-                                                                seq_length,
-                                                                record.CHROM,
-                                                                record.POS,
-                                                                record.REF,
-                                                                record.ALT[0], logger)
-                            fa_header = ">" + str(record.CHROM) + "_" + str(record.POS) + "_"  + str(record.REF) + "_" + str(record.ALT[0])
-#                            print(fa_header)
-#                            print(mutant_seq)
-                            fout.write(sliding_windown(ref_seq, kmer) + '\t' + sliding_windown(mutant_seq, kmer) +'\n')
-#                            fout.write(sliding_windown(mutant_seq, kmer) + '\n')
-#                            fref.write(sliding_windown(ref_seq, kmer) + '\n')
-                            vcf_writer.write_record(record)                        
+                    is_deletion = len(rec.alts[0]) < len(rec.ref)
+                    for q in range(duplicates):
+                        ref_seq, mutant_seq, index = execute_kmers(reference,
+                                                            seq_length,
+                                                            rec.chrom,
+                                                            rec.pos,
+                                                            rec.ref,
+                                                            rec.alts[0],
+                                                            logger,
+                                                            is_deletion)
+                        fout.write(sliding_windown(ref_seq, kmer) + '\t' + sliding_windown(mutant_seq, kmer) +'\n')
+                        rec.info["INSERT"] = index
+                        vcf_out.write(rec)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
