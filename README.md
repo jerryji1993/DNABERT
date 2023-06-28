@@ -5,13 +5,38 @@ This repository includes the implementation of 'DNABERT: pre-trained Bidirection
 
 ## Update 2023/06/26
 
-The second generation of DNABERT, named DNABERT-2, is publically available at https://github.com/Zhihan1996/DNABERT_2. DNABERT-2 is trained on multi-species genomes and is more efficient, powerful, and easy to use than its first generation. A comprehensive benchmark containing $28$ datasets on $7$ tasks is also published. Please check out DNABERT-2 if you are interested in our work. Thanks!
+The second generation of DNABERT, named [DNABERT-2](https://arxiv.org/abs/2306.15006), is publically available at https://github.com/Zhihan1996/DNABERT_2. DNABERT-2 is trained on multi-species genomes and is more efficient, powerful, and easy to use than its first generation. We also provide simpler usage of DNABERT in the new package. A comprehensive benchmark Genome Understanding Evaluation (GUE), which contains $28$ datasets on $7$ tasks, is also published. Please check out DNABERT-2 if you are interested in our work. Thanks!
 
 
 ## Citation
-If you have used DNABERT in your research, please kindly cite the following publication:
+If you have used DNABERT in your research, please kindly cite the following publications:
 
-Yanrong Ji, Zhihan Zhou, Han Liu, Ramana V Davuluri, DNABERT: pre-trained Bidirectional Encoder Representations from Transformers model for DNA-language in genome, Bioinformatics, 2021;, btab083, https://doi.org/10.1093/bioinformatics/btab083
+```
+@article{ji2021dnabert,
+    author = {Ji, Yanrong and Zhou, Zhihan and Liu, Han and Davuluri, Ramana V},
+    title = "{DNABERT: pre-trained Bidirectional Encoder Representations from Transformers model for DNA-language in genome}",
+    journal = {Bioinformatics},
+    volume = {37},
+    number = {15},
+    pages = {2112-2120},
+    year = {2021},
+    month = {02},
+    issn = {1367-4803},
+    doi = {10.1093/bioinformatics/btab083},
+    url = {https://doi.org/10.1093/bioinformatics/btab083},
+    eprint = {https://academic.oup.com/bioinformatics/article-pdf/37/15/2112/50578892/btab083.pdf},
+}
+
+
+@misc{zhou2023dnabert2,
+      title={DNABERT-2: Efficient Foundation Model and Benchmark For Multi-Species Genome}, 
+      author={Zhihan Zhou and Yanrong Ji and Weijian Li and Pratik Dutta and Ramana Davuluri and Han Liu},
+      year={2023},
+      eprint={2306.15006},
+      archivePrefix={arXiv},
+      primaryClass={q-bio.GN}
+}
+```
 
 
 ## 1. Environment setup
