@@ -281,6 +281,9 @@ Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 
 
 #### 5.2 Plotting tool
 
+Create an attention heat map of a sample DNA sequence
+
+
 ```
 export KMER=6
 export MODEL_PATH=./ft/$KMER
@@ -290,7 +293,8 @@ python visualize.py \
     --model_path $MODEL_PATH \
     --start_layer 11 \
     --end_layer 11 \
-    --metric mean
+    --metric mean \
+    --sequence TGCCTGGCTTTTTGTAATTTTTGAAGAGACGGGGTTTTGCCATGATG
 ```
 
 ## 6. Motif analysis
