@@ -279,7 +279,19 @@ With the above command, the fine-tuned DNABERT model will be loaded from `MODEL_
 
 Add --fp16 tag if you want to perfrom mixed precision. (You have to install the 'apex' from source first).
 
-####5.2 Plotting tool
+#### 5.2 Plotting tool
+
+```
+export KMER=6
+export MODEL_PATH=./ft/$KMER
+
+python visualize.py \
+    --kmer $KMER \
+    --model_path $MODEL_PATH \
+    --start_layer 11 \
+    --end_layer 11 \
+    --metric mean
+```
 
 ## 6. Motif analysis
 
