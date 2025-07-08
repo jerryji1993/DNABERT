@@ -3,6 +3,15 @@ This repository includes the implementation of 'DNABERT: pre-trained Bidirection
 
  In this package, we provides resources including: source codes of the DNABERT model, usage examples, pre-trained models, fine-tuned models and visulization tool. This package is still under development, as more features will be included gradually. Training of DNABERT consists of general-purposed pre-training and task-specific fine-tuning. As a contribution of our project, we released the pre-trained models in this repository. We extended codes from [huggingface](https://github.com/huggingface/transformers) and adapted them to the DNA scenario.
 
+## Update 2025/07/08
+
+The original links to the pretrained DNABERT models (DNABERT-3, 4, 5, 6) have expired. Please go to HuggingFace to access and download the models:
+
+DNABERT-3: https://huggingface.co/zhihan1996/DNA_bert_3
+DNABERT-4: https://huggingface.co/zhihan1996/DNA_bert_4
+DNABERT-5: https://huggingface.co/zhihan1996/DNA_bert_5
+DNABERT-6: https://huggingface.co/zhihan1996/DNA_bert_6
+
 ## Update 2023/06/26
 
 The second generation of DNABERT, named [DNABERT-2](https://arxiv.org/abs/2306.15006), is publically available at https://github.com/Zhihan1996/DNABERT_2. DNABERT-2 is trained on multi-species genomes and is more efficient, powerful, and easy to use than its first generation. We also provide simpler usage of DNABERT in the new package. A comprehensive benchmark Genome Understanding Evaluation (GUE), which contains $28$ datasets on $7$ tasks, is also published. Please check out DNABERT-2 if you are interested in our work. Thanks!
