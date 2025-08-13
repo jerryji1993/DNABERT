@@ -8,4 +8,6 @@ statsmodels
 biopython
 pandas
 pybedtools
+matplotlib
+seaborn
 sentencepiece==0.1.91
