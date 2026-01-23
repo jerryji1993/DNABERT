@@ -8,4 +8,4 @@ statsmodels
 biopython
 pandas
 pybedtools
-sentencepiece==0.1.91
+sentencepiece==0.2.1
